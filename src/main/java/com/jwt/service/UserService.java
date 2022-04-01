@@ -13,6 +13,8 @@ public interface UserService {
   
 	Page<UserModel> getAllUsers(String mc,int page, int size);
 	Optional<UserModel> findUser(Long id);
+	UserModel findUserById(Long id);
+
 	UserModel updateUser(UserModel user,Long id);
 	UserModel getUser(String userName);
 	boolean  deleteUser(Long id);

@@ -165,6 +165,17 @@ public class UserService_Imp implements UserService,UserDetailsService {
 	user.setStatus(Status_value.ACTIVE);
 		return true;
 	}
+
+
+	@Override
+	public UserModel findUserById(Long id) {
+		Optional<UserModel> user =  userRepo.findById(id);
+		if(!user.isPresent()) {
+			throw new IllegalStateException(
+					"Usser with Id "+ id + "does not Exists !!!" );
+		}
+		return userRepo.findById(id).get();
+	}
 	
 
 }

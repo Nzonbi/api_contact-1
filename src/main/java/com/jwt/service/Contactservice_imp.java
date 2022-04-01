@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
@@ -24,8 +26,8 @@ public class Contactservice_imp implements ContactService {
 	@Autowired
 	private UserService userService;
 	@Override
-	public List<Contact> getAllContact() {
-		return contactRepo.findAll();
+	public Page<Contact> getAllContact(String mc,int page,int size) {
+		return contactRepo.chercherContact("%"+mc+"%",PageRequest.of(page, size));
 	}
 	@Override
 	public Optional<Contact> findContact(Long id) {

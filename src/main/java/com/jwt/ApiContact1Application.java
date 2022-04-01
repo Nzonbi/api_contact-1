@@ -34,10 +34,10 @@ public class ApiContact1Application implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		 userService.saveUser (new UserModel("tsague","case","case@gmail.com",Sexe.FEMME,"1234","toto.png",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
-		 userService.saveUser(new UserModel("franck","thibaut","thibaut@gmail.com",Sexe.FEMME,"1234","toto.png",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
-		 userService.saveUser(new UserModel("tomy","chuck","chuck@gmail.com" ,Sexe.FEMME,"1234" ,"toto.png",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
-		 userService.saveUser(new UserModel("sarra","morgan","morgan@gmail.com",Sexe.FEMME,"1234" ,"toto.png",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
+		 userService.saveUser (new UserModel("tsague","case","case@gmail.com",Sexe.FEMME,"1234","OIq.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
+		 userService.saveUser(new UserModel("franck","thibaut","thibaut@gmail.com",Sexe.FEMME,"1234","nzonbi1.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
+		 userService.saveUser(new UserModel("tomy","chuck","chuck@gmail.com" ,Sexe.FEMME,"1234" ,"OIPCRMTFTRB.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
+		 userService.saveUser(new UserModel("sarra","morgan","morgan@gmail.com",Sexe.FEMME,"1234" ,"OIPW7RJF7LH.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
  
 		 userService.saveRole(new Role_Model("ROLE_USER"));
 		 userService.saveRole(new Role_Model("ROLE_ADMIN"));

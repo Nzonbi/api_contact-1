@@ -1,7 +1,10 @@
 package com.jwt.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +12,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +31,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwt.entities.Contact;
 import com.jwt.entities.Role_Model;
@@ -52,6 +61,8 @@ public class apiResource {
 	private UserService  userService;
 	@Autowired
 	private ContactService contactService;
+	@Autowired
+	private ServletContext context;
 
 	
 	/*======================================================================
@@ -72,13 +83,34 @@ public class apiResource {
 	}
 	
 	@PostMapping("/users/save")
-	public ResponseEntity<UserModel>  saveUser(@RequestBody UserModel user) {
-		  URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/save").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveUser(user));
+	public UserModel  saveUser(@RequestParam("user") String user,
+			                                   @RequestParam(name = "file", required = false) MultipartFile file)  throws JsonParseException,JsonMappingException,Exception {
+	   
+		UserModel users = new ObjectMapper().readValue(user,UserModel.class);
+		if(!file.isEmpty()) {
+			addUserImage(file);
+			String fileName = file.getOriginalFilename();
+			String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
+			users.setPhotos(newFileName);
+			return userService.saveUser(users);
+		}else {
+			return userService.saveUser(users);
+		}
+	}
+	@GetMapping("/images")
+	public byte[] getImages(@RequestParam("name") String name) throws Exception{
+		UserModel users = userService.getUser(name);
+    	String filePath = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\userImages\\";
+
+        return Files.readAllBytes(Paths.get(filePath+users.getPhotos()));
 	}
 	@GetMapping("/users/{id}")
 	public ResponseEntity<Optional<UserModel>>  findUser(@PathVariable("id") Long id) {
 		return ResponseEntity.ok().body(userService.findUser(id));
+	}
+	@GetMapping("/users/one")
+	public ResponseEntity<UserModel> findUserByUsername(@RequestParam("name") String name) {
+		return ResponseEntity.ok().body(userService.getUser(name));
 	}
 	@GetMapping("/users/contact")
 	public ResponseEntity<List<Contact>>  getContactForSingleUser(@RequestParam(required = true) String name) {
@@ -116,13 +148,45 @@ public class apiResource {
 		return ResponseEntity.ok().body("Role removed succesfully !");
 	}
 	/*======================================================================
+	 *-------->>>>>>>>>| Quelque fonctions importante |<<<<<<<<<<--------------
+	 *======================================================================
+	 */
+    private void	addUserImage(MultipartFile file){
+    	String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\userImages";
+ 	    String fileName  = file.getOriginalFilename();
+		String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
+		File serverFile = new File(path+File.separator+newFileName);
+		try {
+			FileUtils.writeByteArrayToFile(serverFile, file.getBytes());
+		} catch (Exception e) {
+			System.out.println("faile to upload");
+		}
+		
+	}
+    private void	addContactImage(MultipartFile file){
+    	String path = "    C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage";
+ 	    String fileName  = file.getOriginalFilename();
+		String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
+		File serverFile = new File(path+File.separator+newFileName);
+		try {
+			FileUtils.writeByteArrayToFile(serverFile, file.getBytes());
+		} catch (Exception e) {
+			System.out.println("faile to upload");
+		}
+		
+	}
+
+	
+	/*======================================================================
 	 *-------->>>>>>>>>| CRUD SUR LA TABLE CONTACT |<<<<<<<<<<--------------
 	 *======================================================================
 	 */
 	
 	@GetMapping("/contact")
-	public ResponseEntity<List<Contact>> getAllContact(){
-		return ResponseEntity.ok().body(contactService.getAllContact());
+	public ResponseEntity<Page<Contact>> getAllContact(@RequestParam(name="mc", defaultValue="" ) String mc,
+			                                           @RequestParam(name="page",defaultValue="0") int page,
+			                                           @RequestParam(name="size",defaultValue="3") int size){
+		return ResponseEntity.ok().body(contactService.getAllContact(mc,page,size));
 	}
 	@GetMapping("/contact/{id}")
 	public ResponseEntity<Optional<Contact>> getContact(@PathVariable("id") Long id,
@@ -131,11 +195,20 @@ public class apiResource {
 	}
 	
 	@PostMapping("/contact/save")
-	public ResponseEntity<Contact>  saveContact(@RequestBody Contact contact,
-			                                     @RequestParam(required = true) String username) {
-		
-		  URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/save").toUriString());
-		return ResponseEntity.created(uri).body(contactService.saveContact(username, contact));
+	public Contact saveContact(@RequestParam("contact") String contact,
+			                                     @RequestParam("file") MultipartFile file,
+			                                     @RequestParam(required = true) String username) throws JsonParseException,JsonMappingException,Exception {
+
+		Contact contacts = new ObjectMapper().readValue(contact,Contact.class);
+		if(!file.isEmpty()) {
+			addContactImage(file);
+			String fileName = file.getOriginalFilename();
+			String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
+			contacts.setPhoto(newFileName);
+			return contactService.saveContact(username, contacts);
+		}else {
+			return contactService.saveContact(username, contacts);
+		}
 	}
 	@DeleteMapping("/contact/{id}")
 	public ResponseEntity<?>  deleteContact(@PathVariable("id") Long id) {

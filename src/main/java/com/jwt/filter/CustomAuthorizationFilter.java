@@ -34,7 +34,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		response.setHeader("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE");
 		response.setHeader("Access-Control-Allow-Headers", "Content-type,Accept,X-Requested-With,x-www-form-urlencoded,Authorization,Bearer");
-		if(request.getServletPath().equals("/login") || request.getServletPath().equals("/api/token/refresh")) {
+		if(request.getServletPath().equals("/login") || request.getServletPath().equals("/api/token/refresh") || request.getServletPath().equals("/api/users/save")) {
 			filterChain.doFilter(request, response);
 		}else {
 			String autorizationHeader = request.getHeader("Authorization");
