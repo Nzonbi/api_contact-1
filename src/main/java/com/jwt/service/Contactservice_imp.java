@@ -38,37 +38,36 @@ public class Contactservice_imp implements ContactService {
 		Contact cont = contactRepo.findById(id).orElseThrow(
 				       ()->new IllegalStateException("contact not found"));
 		
-		if(contact.getNom()!=null && 
+		if(contact.getNom()!="" && 
 				!Objects.equals(cont.getNom(), contact.getNom())) {
 			cont.setNom(contact.getNom());
 			
 		}
-		if(contact.getPrenom()!=null && 
+		if(contact.getPrenom()!="" && 
 				!Objects.equals(cont.getPrenom(), contact.getPrenom())) {
 			cont.setPrenom(contact.getPrenom());
 			
 		}
-		if(contact.getEmail()!=null && 
+		if(contact.getEmail()!="" && 
 				!Objects.equals(cont.getEmail(), contact.getEmail())) {
 			cont.setEmail(contact.getEmail());
 			
 		}
-		if(contact.getTel()!=null && 
+		if(contact.getTel()!="" && 
 				!Objects.equals(cont.getTel(), contact.getTel())) {
-			cont.setTel(contact.getTel());
-			
+			cont.setTel(contact.getTel());	
 		}
-		if(contact.getPhoto()!=null && 
+		if(contact.getPhoto()!="" && 
 				!Objects.equals(cont.getPhoto(), contact.getPhoto())) {
 			cont.setPhoto(contact.getPhoto());
 			
 		}
-		if(contact.getSexe()!=null && 
+		if(!contact.getSexe().equals("") && 
 				!Objects.equals(cont.getSexe(), contact.getSexe())) {
 			cont.setSexe(contact.getSexe());
 			
 		}
-		return contact;
+		return cont;
 	}
 	@Override
 	public boolean deleteContact(Long id) {

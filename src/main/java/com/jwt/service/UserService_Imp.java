@@ -4,6 +4,7 @@ import java.nio.channels.IllegalSelectorException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.jwt.entities.Contact;
 import com.jwt.entities.Role_Model;
+import com.jwt.entities.Sexe;
 import com.jwt.entities.Status_value;
 import com.jwt.entities.UserModel;
 import com.jwt.repo.RoleRepo;
@@ -60,11 +62,41 @@ public class UserService_Imp implements UserService,UserDetailsService {
 
 	@Override
 	public UserModel updateUser(UserModel user, Long id) {
-		 userRepo.findById(id)
-				.orElseThrow(()->new IllegalStateException(
-						" User with Id "+ id + "does not exists !!!"));
-		user.setId(id);
-		return userRepo.save(user);
+		UserModel users = userRepo.findById(id).orElseThrow(
+			       ()->new IllegalStateException("contact not found"));
+	
+	if(user.getName()!="" && 
+			!Objects.equals(users.getName(), user.getName())) {
+		users.setName(user.getName());
+		
+	}
+	if(user.getUsername()!="" && 
+			!Objects.equals(users.getUsername(), user.getUsername())) {
+		users.setUsername(user.getUsername());
+		
+	}
+	if(user.getEmail()!="" && 
+			!Objects.equals(users.getEmail(), user.getEmail())) {
+		users.setEmail(user.getEmail());
+		
+	}
+	
+	if(user.getPhotos()!="" && 
+			!Objects.equals(users.getPhotos(), user.getPhotos())) {
+		users.setPhotos(user.getPhotos());
+		
+	}
+	if(user.getSexe()!=null && 
+			!Objects.equals(users.getSexe(), user.getSexe())) {
+		users.setSexe(user.getSexe());
+		
+	}
+	if(user.getPassWord()!="" && 
+			!Objects.equals(users.getPassWord(), user.getPassWord())) {
+		users.setPassWord(user.getPassWord());
+		
+	}
+	return users;
 	}
 
 	@Override
@@ -85,7 +117,7 @@ public class UserService_Imp implements UserService,UserDetailsService {
 			  throw new IllegalStateException(" Email taken !!!");
 		  }
 			user.setPassWord(passWordEncoder.encode(user.getPassWord()));
-
+     
 		  userRepo.save(user);
 		  user.setStatus(Status_value.ACTIVE);
 		  this.addRoleToUser(user.getUsername(), "ROLE_USER");

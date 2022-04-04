@@ -47,6 +47,7 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users").hasAnyAuthority("ROLE_SUPER_ADMIN","ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/contact/**").hasAnyAuthority("ROLE_USER","ROLE_SUPER_ADMIN","ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/images/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/imagesCont/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/one/**").hasAnyAuthority("ROLE_USER","ROLE_SUPER_ADMIN","ROLE_ADMIN");
 
 		/*

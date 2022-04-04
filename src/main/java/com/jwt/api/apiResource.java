@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -45,6 +47,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwt.entities.Contact;
 import com.jwt.entities.Role_Model;
+import com.jwt.entities.Sexe;
 import com.jwt.entities.UserModel;
 import com.jwt.repo.ContactRepo;
 import com.jwt.service.ContactService;
@@ -86,23 +89,70 @@ public class apiResource {
 	public UserModel  saveUser(@RequestParam("user") String user,
 			                                   @RequestParam(name = "file", required = false) MultipartFile file)  throws JsonParseException,JsonMappingException,Exception {
 	   
+		
 		UserModel users = new ObjectMapper().readValue(user,UserModel.class);
-		if(!file.isEmpty()) {
+		try {
 			addUserImage(file);
 			String fileName = file.getOriginalFilename();
 			String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
 			users.setPhotos(newFileName);
-			return userService.saveUser(users);
-		}else {
-			return userService.saveUser(users);
+
+		}catch (NullPointerException e) {
+			if(users.getSexe()==Sexe.HOMME) {
+				users.setPhotos("h.png");
+				return userService.saveUser(users);
+			}
+			if(users.getSexe()==Sexe.FEMME) {
+				users.setPhotos("f.webp");
+				return userService.saveUser(users);
+			}
 		}
+		return userService.saveUser(users);
+
+		
 	}
 	@GetMapping("/images")
 	public byte[] getImages(@RequestParam("name") String name) throws Exception{
+		byte[] bite = null;
 		UserModel users = userService.getUser(name);
     	String filePath = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\userImages\\";
+   try {
+	   bite = Files.readAllBytes(Paths.get(filePath+users.getPhotos()));
+	
+   }catch (Exception e) {
+	   if(users.getSexe() == Sexe.HOMME) {
+		   users.setPhotos("h.png");
+			 return Files.readAllBytes(Paths.get(filePath+users.getPhotos()));
+	   }
+	   if(users.getSexe() == Sexe.FEMME) {
+		   users.setPhotos("f.webp");
+			 return Files.readAllBytes(Paths.get(filePath+users.getPhotos()));
 
-        return Files.readAllBytes(Paths.get(filePath+users.getPhotos()));
+	   }
+	   
+     }
+   return bite;
+	}
+	@GetMapping("/imagesCont/{id}")
+	public byte[] getContactImages(@PathVariable("id") Long id) throws Exception{
+		byte[] bite = null;
+		Contact cont = contactService.findContact(id).get();
+    	String filePath = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage\\";
+       try {
+    	   bite =  Files.readAllBytes(Paths.get(filePath+cont.getPhoto()));
+    	   
+       }catch (Exception e) {
+    	   if(cont.getSexe() == Sexe.HOMME) {
+    		   cont.setPhoto("h.png");
+    		   return Files.readAllBytes(Paths.get(filePath+cont.getPhoto()));
+    	   }
+    	   if(cont.getSexe() == Sexe.FEMME) {
+    		   cont.setPhoto("f.webp");
+    		   return Files.readAllBytes(Paths.get(filePath+cont.getPhoto()));
+    	   }
+
+	}
+       return bite;
 	}
 	@GetMapping("/users/{id}")
 	public ResponseEntity<Optional<UserModel>>  findUser(@PathVariable("id") Long id) {
@@ -132,9 +182,40 @@ public class apiResource {
 		return ResponseEntity.ok().build();
 	}
 	@PutMapping("/users/update/{id}")
-	public ResponseEntity<UserModel>  UpdateUser(@RequestBody UserModel user,@PathVariable Long id) {
-		  URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/update").toUriString());
-		return ResponseEntity.created(uri).body(userService.updateUser(user, id)) ;
+	public void  UpdateUser(@RequestParam("user") String user,
+			@RequestParam(name="file",required = false) MultipartFile file,
+			@PathVariable Long id) throws JsonParseException,JsonMappingException,Exception {
+	  
+		UserModel users = new ObjectMapper().readValue(user,UserModel.class);
+		try {
+			try {
+				if(users.getPhotos().equals("h.png") || users.getPhotos().equals("f.webp")) {
+					throw new Exception();
+				}
+				deleteUserImage(users);
+				
+			}catch (Exception e) {
+				System.out.println("image pas supprimee");
+			}
+		    
+			
+			String fileName = file.getOriginalFilename();
+			String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
+			users.setPhotos(newFileName);
+			userService.updateUser(users,id);
+			addUserImage(file);
+		}catch (NullPointerException e) {
+			if(users.getSexe()==Sexe.HOMME) {
+				users.setPhotos("h.png");
+				userService.updateUser(users,id);
+			}
+			if(users.getSexe()==Sexe.FEMME) {
+				users.setPhotos("f.webp");
+				userService.updateUser(users,id);
+				
+			}
+		}
+		
 	}
 	
 	@PostMapping("/role/addroleuser")
@@ -164,7 +245,7 @@ public class apiResource {
 		
 	}
     private void	addContactImage(MultipartFile file){
-    	String path = "    C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage";
+    	String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage";
  	    String fileName  = file.getOriginalFilename();
 		String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
 		File serverFile = new File(path+File.separator+newFileName);
@@ -175,6 +256,31 @@ public class apiResource {
 		}
 		
 	}
+    private void deleteContactImage(Contact contact) {
+    	
+    		String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage\\";
+    		try {
+    			File file = new File(path+contact.getPhoto());
+    			file.delete();
+    			
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		
+    	}
+       }
+    private void deleteUserImage(UserModel user) {
+    
+    		String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\userImages\\";
+    		try {
+    			
+    			File file = new File(path+user.getPhotos());
+    			file.delete();
+    			
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	
+    }
 
 	
 	/*======================================================================
@@ -196,19 +302,28 @@ public class apiResource {
 	
 	@PostMapping("/contact/save")
 	public Contact saveContact(@RequestParam("contact") String contact,
-			                                     @RequestParam("file") MultipartFile file,
+			                                     @RequestParam(name="file",required=false) MultipartFile file,
 			                                     @RequestParam(required = true) String username) throws JsonParseException,JsonMappingException,Exception {
 
 		Contact contacts = new ObjectMapper().readValue(contact,Contact.class);
-		if(!file.isEmpty()) {
+		try {
 			addContactImage(file);
 			String fileName = file.getOriginalFilename();
 			String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
 			contacts.setPhoto(newFileName);
-			return contactService.saveContact(username, contacts);
-		}else {
-			return contactService.saveContact(username, contacts);
+			
+		}catch (NullPointerException e) {
+			if( contacts.getSexe()==Sexe.HOMME) {
+				contacts.setPhoto("h.png");
+				return contactService.saveContact(username, contacts);
+			}
+			if( contacts.getSexe()==Sexe.FEMME) {
+				contacts.setPhoto("f.webp");
+				return contactService.saveContact(username, contacts);
+			}
 		}
+		return contactService.saveContact(username, contacts);
+		
 	}
 	@DeleteMapping("/contact/{id}")
 	public ResponseEntity<?>  deleteContact(@PathVariable("id") Long id) {
@@ -217,11 +332,38 @@ public class apiResource {
 		return ResponseEntity.ok().body(contactService.deleteContact(id));
 	}
 	@PutMapping("/contact/{id}")
-	public ResponseEntity<?>  updateContact(@RequestBody Contact contact,
-			                                    @PathVariable("id") Long id  ) {
+	public void  updateContact(@RequestParam("contact") String contact,
+			                                @RequestParam(name="file",required=false) MultipartFile file,
+			                                    @PathVariable("id") Long id  )throws JsonParseException,JsonMappingException,Exception  {
 			                                 
-		
-		return ResponseEntity.ok().body(contactService.updateContact(id, contact));
+		Contact contacts = new ObjectMapper().readValue(contact,Contact.class);
+		try {
+			try {
+				if(contacts.getPhoto().equals("h.png") || contacts.getPhoto().equals("f.webp")) {
+					throw new Exception();
+				}
+				
+				deleteContactImage(contacts);
+			}catch (Exception e) {
+				System.out.println("image pas supprimee");
+
+			}
+			String fileName = file.getOriginalFilename();
+			String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
+			contacts.setPhoto(newFileName);
+			contactService.updateContact(id, contacts);
+			addContactImage(file);
+		}catch (NullPointerException e) {
+			if( contacts.getSexe()==Sexe.HOMME) {
+				contacts.setPhoto("h.png");
+				contactService.updateContact(id, contacts);
+			 
+			}
+			if(contacts.getSexe()==Sexe.FEMME) {
+				contacts.setPhoto("f.webp");
+				contactService.updateContact(id, contacts);
+			}
+		}
 	}
 	
 	/*======================================================================
