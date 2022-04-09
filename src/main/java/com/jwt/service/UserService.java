@@ -26,6 +26,7 @@ public interface UserService {
 	List<Contact> contactForSingleUser(String username);
 	boolean desactivateUser(Long id);
 	boolean activateUser(Long id);
+	String confirm(String token);
 
 	
 }

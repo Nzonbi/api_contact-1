@@ -42,6 +42,7 @@ import lombok.NoArgsConstructor;
 		private Sexe sexe;
 		private String passWord;
 		private String photo;
+		private boolean enabled=false;
 		
 		private Status_value status;
 		 @OneToMany( cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
@@ -149,6 +150,9 @@ import lombok.NoArgsConstructor;
 
 		public void setPhotos(String photos) {
 			this.photo = photos;
+		}
+		public boolean isEnabled() {
+			return enabled;
 		}
 
 		

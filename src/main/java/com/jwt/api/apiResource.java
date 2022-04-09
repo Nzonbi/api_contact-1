@@ -84,7 +84,10 @@ public class apiResource {
 			                      @RequestParam(name="size",defaultValue="3") int size){
 		return ResponseEntity.ok().body(userService.getAllUsers(mc,page,size));
 	}
-	
+	  @GetMapping(path = "confirm")
+	  public String confirmation(@RequestParam("token") String token) {
+		return  userService.confirm(token);
+	  }
 	@PostMapping("/users/save")
 	public UserModel  saveUser(@RequestParam("user") String user,
 			                                   @RequestParam(name = "file", required = false) MultipartFile file)  throws JsonParseException,JsonMappingException,Exception {
