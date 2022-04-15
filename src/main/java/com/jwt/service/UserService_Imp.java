@@ -173,7 +173,7 @@ public class UserService_Imp implements UserService,UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		UserModel user = userRepo.findByUsername(username);
+		UserModel user = userRepo.connectUser(username);
 		if(user==null || user.getStatus().equals(Status_value.DESACTIVATE)) {
 			throw new UsernameNotFoundException("user not found in data base");
 		}
@@ -258,8 +258,11 @@ public class UserService_Imp implements UserService,UserDetailsService {
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
+        if (expiredAt.isBefore(LocalDateTime.now())){
+//        	System.out.println(confirmationToken.getUserModel().getId());
+//        	deleteUser(confirmationToken.getUserModel().getId());
+        	return "sorry! the the token expired"; 
+//            throw new IllegalStateException("token expired");
         }
 
         confirmationTokenService.setConfirmedAt(token);
@@ -271,6 +274,13 @@ public class UserService_Imp implements UserService,UserDetailsService {
 	 public int enableUserModel(String email) {
 	        return userRepo.enableUserModel(email);
 	    }
+
+		@Override
+		public UserModel seachByEmail(String email) {
+		UserModel user =	userRepo.findByEmail(email).orElseThrow(()-> new IllegalStateException("users not found"));
+			return user;
+		}
+
 	  private String buildEmail(String name, String link) {
 	        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
 	                "\n" +
@@ -339,6 +349,19 @@ public class UserService_Imp implements UserService,UserDetailsService {
 	                "\n" +
 	                "</div></div>";
 	    }
+
+
+	@Override
+	public boolean deleteDesabledUser(String username) {
+		
+		UserModel user = userRepo.findByUsername(username);
+		if(user.isEnabled()){
+			return false;
+		}
+		userRepo.deleteById(user.getId());
+		return true;
+	}
+
 
 
 }

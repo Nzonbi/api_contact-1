@@ -26,4 +26,7 @@ public interface UserRepo extends JpaRepository<UserModel, Long> {
 	   @Query("UPDATE UserModel a " +
 	           "SET a.enabled = TRUE WHERE a.email = ?1")
 	   int enableUserModel(String email);
+	 
+	 @Query("SELECT u FROM UserModel u WHERE u.username = ?1 OR u.email = ?1")
+	 UserModel connectUser(String identifiant);
 }

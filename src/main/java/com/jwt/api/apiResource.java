@@ -231,6 +231,10 @@ public class apiResource {
 		userService.removeRoleToUser(form.getUsername(),form.getRoleName());
 		return ResponseEntity.ok().body("Role removed succesfully !");
 	}
+	@DeleteMapping("/users/deleteDesabledUser")
+	public boolean deleteDesabledUser(@RequestParam("name") String username) {
+		return userService.deleteDesabledUser(username);
+	}
 	/*======================================================================
 	 *-------->>>>>>>>>| Quelque fonctions importante |<<<<<<<<<<--------------
 	 *======================================================================

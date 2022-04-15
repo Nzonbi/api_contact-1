@@ -27,6 +27,9 @@ public interface UserService {
 	boolean desactivateUser(Long id);
 	boolean activateUser(Long id);
 	String confirm(String token);
+	UserModel seachByEmail(String email);
+	boolean deleteDesabledUser(String username);
+
 
 	
 }
