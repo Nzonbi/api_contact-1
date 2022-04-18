@@ -140,7 +140,7 @@ public class apiResource {
 	public byte[] getContactImages(@PathVariable("id") Long id) throws Exception{
 		byte[] bite = null;
 		Contact cont = contactService.findContact(id).get();
-    	String filePath = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage\\";
+    	String filePath = "src\\main\\contactImage\\";
        try {
     	   bite =  Files.readAllBytes(Paths.get(filePath+cont.getPhoto()));
     	   
@@ -240,7 +240,7 @@ public class apiResource {
 	 *======================================================================
 	 */
     private void	addUserImage(MultipartFile file){
-    	String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\userImages";
+    	String path = "src\\main\\userImages";
  	    String fileName  = file.getOriginalFilename();
 		String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
 		File serverFile = new File(path+File.separator+newFileName);
@@ -252,7 +252,7 @@ public class apiResource {
 		
 	}
     private void	addContactImage(MultipartFile file){
-    	String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage";
+    	String path = "src\\main\\contactImage";
  	    String fileName  = file.getOriginalFilename();
 		String newFileName = FilenameUtils.getBaseName(fileName)+"."+FilenameUtils.getExtension(fileName);
 		File serverFile = new File(path+File.separator+newFileName);
@@ -265,7 +265,7 @@ public class apiResource {
 	}
     private void deleteContactImage(Contact contact) {
     	
-    		String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\contactImage\\";
+    		String path = "src\\main\\contactImage\\";
     		try {
     			File file = new File(path+contact.getPhoto());
     			file.delete();
@@ -277,7 +277,7 @@ public class apiResource {
        }
     private void deleteUserImage(UserModel user) {
     
-    		String path = "C:\\Users\\stague\\Documents\\springBoot\\api_contact-1\\src\\main\\userImages\\";
+    		String path = "src\\main\\userImages\\";
     		try {
     			
     			File file = new File(path+user.getPhotos());
