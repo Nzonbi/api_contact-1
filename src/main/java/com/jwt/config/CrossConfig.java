@@ -14,7 +14,7 @@ public class CrossConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-				        .allowedOrigins(" http://localhost:4200")
+				        .allowedOrigins("http://localhost:4200")
 				        .allowedMethods("POST","GET","PUT","DELETE","PACH")
 				        .allowedHeaders("*")
 				        .exposedHeaders("Authorization")
