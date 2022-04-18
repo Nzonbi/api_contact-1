@@ -145,7 +145,7 @@ public class UserService_Imp implements UserService,UserDetailsService {
 			
 			confirmationTokenService.saveConfirmationToken(
 					confirmationToken);
-			  String link = "http://localhost:9090/api/confirm?token=" + token;
+			  String link = "https://contact1-springbootapp.herokuapp.com/api/confirm?token=" + token;
 		        emailSender.send(
 		                user.getEmail(),
 		                buildEmail(user.getName(), link));
