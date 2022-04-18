@@ -1,0 +1,36 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  datasource:
+    password: 8ff11120416eaf1524ca777ccbc3e755235d671ff24a95e2fa4a5e8509e062aa
+    url: jdbc:postgresql://ec2-18-214-134-226.compute-1.amazonaws.com:5432/d4n1ih2p237rgu
+    username: ewyoiusnmglkcc
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: minodevpro@gmail.com
+    password: 677438521
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+          
+
+         
+

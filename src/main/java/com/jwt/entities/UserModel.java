@@ -18,15 +18,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.annotations.Columns;
-import org.springframework.beans.factory.annotation.Value;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 
-	@Entity @Data @AllArgsConstructor @NoArgsConstructor
+	@Entity
 	public class UserModel {
 		@Id @SequenceGenerator(allocationSize = 1, name = "id")
 		@GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,7 +52,7 @@ import lombok.NoArgsConstructor;
 			this.contact = contact;
 		}
 
-		@ManyToMany(fetch = FetchType.EAGER)
+		@ManyToMany
 		private Collection<Role_Model> role = new ArrayList<>();
 
 		public Long getId() {
