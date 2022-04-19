@@ -34,23 +34,23 @@ public class ApiContact1Application implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-//		 userService.saveUser (new UserModel("tsague","yves","tsagueyvesthibaut@gmail.com",Sexe.HOMME,"1234","OIq.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
+		 userService.saveUser (new UserModel("tsague","yves","tsagueyvesthibaut@gmail.com",Sexe.HOMME,"1234","OIq.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
 //		 userService.saveUser(new UserModel("franck","thibaut","thibaut@gmail.com",Sexe.FEMME,"1234","nzonbi1.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
 //		 userService.saveUser(new UserModel("tomy","chuck","chuck@gmail.com" ,Sexe.FEMME,"1234" ,"OIPCRMTFTRB.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
 //		 userService.saveUser(new UserModel("sarra","morgan","morgan@gmail.com",Sexe.FEMME,"1234" ,"OIPW7RJF7LH.jpg",Status_value.ACTIVE,new ArrayList<>(),new ArrayList<>()));
 
 //		 userService.saveRole(new Role_Model("ROLE_USER"));
-//		 userService.saveRole(new Role_Model("ROLE_ADMIN"));
-//		 userService.saveRole(new Role_Model("ROLE_SUPER_ADMIN"));
+		 userService.saveRole(new Role_Model("ROLE_ADMIN"));
+		 userService.saveRole(new Role_Model("ROLE_SUPER_ADMIN"));
 //		 
-//		 userService.addRoleToUser("case", "ROLE_USER");
-//		 userService.addRoleToUser("yves", "ROLE_SUPER_ADMIN");
+		 userService.addRoleToUser("yves", "ROLE_USER");
+		 userService.addRoleToUser("yves", "ROLE_SUPER_ADMIN");
 //		 userService.addRoleToUser("chuck", "ROLE_ADMIN");
 //		 userService.addRoleToUser("chuck", "ROLE_USER");
 //		 userService.addRoleToUser("morgan", "ROLE_USER");
 //		 userService.addRoleToUser("thibaut", "ROLE_USER");
 //		 
-//		    userService.addContactToUser("case",new Contact("tsague", "yves thibaut", Sexe.FEMME, "tsague@gmail.com", "343343", "toto.png"));
+		    userService.addContactToUser("yves",new Contact("tsague", "yves thibaut", Sexe.FEMME, "tsague@gmail.com", "343343", "toto.png"));
 //			userService.addContactToUser("case",new Contact("tsague", "yves thibaut", Sexe.FEMME, "tsague@gmail.com", "343343", "toto.png"));
 //			userService.addContactToUser("chuck",new Contact("tsague", "yves thibaut", Sexe.FEMME, "tsague@gmail.com", "343343", "toto.png"));
 
