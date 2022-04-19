@@ -43,7 +43,7 @@ public class ApiContact1Application implements CommandLineRunner {
 		 userService.saveRole(new Role_Model("ROLE_ADMIN"));
 		 userService.saveRole(new Role_Model("ROLE_SUPER_ADMIN"));
 //		 
-//		 userService.addRoleToUser("yves", "ROLE_USER");
+		 userService.addRoleToUser("yves", "ROLE_USER");
 		 userService.addRoleToUser("yves", "ROLE_SUPER_ADMIN");
 //		 userService.addRoleToUser("chuck", "ROLE_ADMIN");
 //		 userService.addRoleToUser("chuck", "ROLE_USER");
